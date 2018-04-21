@@ -3,7 +3,7 @@ let restaurants,
   cuisines
 var map
 var markers = []
-
+var dbPromise = idb.open('couches-n-things', 1);
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
@@ -145,7 +145,7 @@ createRestaurantHTML = (restaurant) => {
   li.append(image);
 
   const name = document.createElement('h2');
-  
+
   name.innerHTML = restaurant.name;
   li.append(name);
 
@@ -179,7 +179,7 @@ addMarkersToMap = (restaurants = self.restaurants) => {
   });
 }
 /**
-add serverWorker 
+add serverWorker
 */
 if ( navigator.serviceWorker ) {
     navigator.serviceWorker.register( '../sw.js' )
