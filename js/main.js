@@ -1,16 +1,63 @@
+
 let restaurants,
   neighborhoods,
   cuisines
 var map
 var markers = []
-var dbPromise = idb.open('couches-n-things', 1);
+var observer;
+var numSteps = 20.0;
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
+  setIntersectObservers();
+  setEventListeners();
   fetchNeighborhoods();
   fetchCuisines();
 });
+
+var setEventListeners = () => {
+  var neighborHoodSelect = document.getElementById('neighborhoods-select');
+  neighborHoodSelect.addEventListener('change' , function(){
+    updateRestaurants();
+  });
+
+  var cuisineSelect = document.getElementById('cuisines-select');
+  cuisineSelect.addEventListener('change' , function(){
+    updateRestaurants();
+  });
+}
+
+var setIntersectObservers = () => {
+  var options = {
+    root: document.querySelector('#scrollArea'),
+    rootMargin: '0px',
+    threshold: buildThresholdList()
+  }
+
+  observer = new IntersectionObserver(handleIntersect, options);
+}
+
+var buildThresholdList = () => {
+  var thresholds = [];
+
+  for (var i=1.0; i<=numSteps; i++) {
+    var ratio = i/numSteps;
+    thresholds.push(ratio);
+  }
+
+  thresholds.push(0);
+  return thresholds;
+}
+
+var handleIntersect = (entries , observer) => {
+  entries.forEach((entry) => {
+    if(entry.intersectionRatio > 0.25){
+      entry.target.classList.remove('hidden');
+      entry.target.classList.add('show');
+    }
+  });
+}
 
 /**
  * Fetch all neighborhoods and set their HTML.
@@ -181,13 +228,3 @@ addMarkersToMap = (restaurants = self.restaurants) => {
 /**
 add serverWorker
 */
-if ( navigator.serviceWorker ) {
-    navigator.serviceWorker.register( '../sw.js' )
-        .then( () => {
-            console.log( `SW registered` )
-        } )
-        .catch( () => {
-            console.log( "Registration failed" );
-        } );
-
-}

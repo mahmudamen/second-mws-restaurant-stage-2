@@ -1,6 +1,8 @@
+
 /**
  * Common database helper functions.
  */
+ var dbPromise;
 class DBHelper {
 
   /**
@@ -9,7 +11,13 @@ class DBHelper {
    */
   static get DATABASE_URL() {
     const port = 1337 // Change this to your server port
-    return `http://localhost:${port}/restaurants`;
+    const isDevModeOn = true;
+    let url=`http://localhost:${port}/`;
+    if(isDevModeOn){
+      url=window.location;
+    }
+    url+=`data/restaurants.json`
+    return url;
   }
 
   static openDatabase() {
@@ -60,20 +68,25 @@ static saveToDatabase(data){
    * Fetch all restaurants.
    */
    static fetchRestaurants(callback) {
-     return DBHelper.getCachedRestaurants().then(restaurants => {
-       if(restaurants.length) {
-         return Promise.resolve(restaurants);
-       } else {
-         return DBHelper.addRestaurantsFromAPI();
-       }
-     })
-     .then(restaurants=> {
-       callback(null, restaurants);
-     })
-     .catch(error => {
-       callback(error, null);
-     })
-   }
+          return readAllData('stores').then(function(restaurants){
+              if(restaurants.length) {
+               console.log('IDB is being used to fetch data');
+               // console.log(Promise.resolve(restaurants));
+              return Promise.resolve(restaurants);
+          } else {
+               console.log('FetchAPI is used to fetch data ');
+
+               return addDataFromFetchApi()
+          }
+      })
+      .then(function(restaurants){
+              callback(null, restaurants);
+      })
+      .catch(function(error){
+              callback(error, null);
+      })
+      }
+
 
   /**
    * Fetch a restaurant by its ID.
@@ -194,7 +207,7 @@ static saveToDatabase(data){
    * Restaurant image URL.
    */
   static imageUrlForRestaurant(restaurant) {
-    return (`/img/${restaurant.photograph}`);
+    return (`/img/${restaurant.jpg}`);
   }
 
   /**

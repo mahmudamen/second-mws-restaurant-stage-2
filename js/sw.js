@@ -1,3 +1,8 @@
+importScripts('/js/idb.js');
+importScripts('/js/dbhelper.js');
+importScripts('/js/app.js');
+importScripts('/js/main.js');
+importScripts('/js/ap.js');
 let cacheName = 'v39';
 let cacheFiles = [
   './',

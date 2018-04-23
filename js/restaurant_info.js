@@ -1,3 +1,4 @@
+
 let restaurant;
 var map;
 const skipLink = document.querySelector(".skip-link");

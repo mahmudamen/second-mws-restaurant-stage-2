@@ -19,7 +19,11 @@ gulp.task('default', ['copy-html', 'copy-images', 'styles', 'scripts'], function
 	gulp.watch('/*.html', ['copy-html']);
 	gulp.watch('./dist/*.html').on('change', browserSync.reload);
 });
-
+gulp.task('scripts2', function() {
+    return gulp.src(['js/app.js','js/idb.js','js/dbhelper.js','js/main.js'])
+        .pipe(concat('all.js'))
+        .pipe(gulp.dest('dist/js/indexBundle'));
+});
 gulp.task('dist', [
 	'copy-html',
 	'copy-images',
